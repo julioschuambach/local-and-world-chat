@@ -23,17 +23,16 @@ namespace LocalChatReceiver
             {
                 using (var channel = connection.CreateModel())
                 {
-                    channel.QueueDeclare(
-                        queue: "Chat",
-                        durable: true,
-                        exclusive: false,
-                        autoDelete: false,
-                        arguments: null);
+                    string exchangeName = "Chat";
+                    channel.ExchangeDeclare(
+                    exchange: exchangeName,
+                    type: ExchangeType.Direct);
 
-                    channel.BasicQos(
-                        prefetchSize: 0,
-                        prefetchCount: 1,
-                        global: false);
+                    var queueName = channel.QueueDeclare("LocalChat");
+                    channel.QueueBind(
+                        queue: queueName,
+                        exchange: exchangeName,
+                        routingKey: "Local");
 
                     var consumer = new EventingBasicConsumer(channel);
 
@@ -50,9 +49,9 @@ namespace LocalChatReceiver
                     };
 
                     channel.BasicConsume(
-                        queue: "Chat",
-                        autoAck: false,
-                        consumer: consumer);
+                    queue: queueName,
+                    autoAck: false,
+                    consumer: consumer);
 
                     Console.WriteLine("Press enter to exit.");
                     Console.ReadLine();

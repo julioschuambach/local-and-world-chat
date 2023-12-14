@@ -22,17 +22,14 @@ namespace Sender
             {
                 using (var channel = connection.CreateModel())
                 {
-                    channel.QueueDeclare(
-                        queue: "Chat",
-                        durable: true,
-                        exclusive: false,
-                        autoDelete: false,
-                        arguments: null);
+                    var exchangeName = "Chat";
+                    channel.ExchangeDeclare(
+                        exchange: exchangeName,
+                        type: ExchangeType.Direct);
 
                     while (true)
                     {
                         Console.Write("Message: ");
-
                         string message = Console.ReadLine();
 
                         if (message == "/exit")
@@ -40,13 +37,13 @@ namespace Sender
 
                         var messageBody = Encoding.UTF8.GetBytes(message);
 
-                        var properties = channel.CreateBasicProperties();
-                        properties.Persistent = true;
+                        Console.Write("Channel: ");
+                        string routingKey = Console.ReadLine();
 
                         channel.BasicPublish(
-                            exchange: "",
-                            routingKey: "Chat",
-                            basicProperties: properties,
+                            exchange: exchangeName,
+                            routingKey: routingKey,
+                            basicProperties: null,
                             body: messageBody);
 
                         Console.WriteLine("[x] Sent message: {0}", message);
