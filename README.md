@@ -4,8 +4,8 @@
 This project consists of a prototype of a multi (and targeted) channel chat using .NET and RabbitMQ.
 
 ## Requirements
-> .NET 6
-> RabbitMQ running on ports 15672 and 5672
+- .NET 6
+- RabbitMQ running on ports 15672 and 5672
 
 ## Demo
 ![demo](/media/demo.gif)
